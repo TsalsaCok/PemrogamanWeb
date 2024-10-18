@@ -1,86 +1,78 @@
-let currentInput = "";
-let operator = "";
-let previousInput = "";
+let display = document.getElementById('display');
+let currentInput = '0';
+let operator = '';
+let previousInput = '';
 
-const display = document.getElementById("display");
-const buttons = document.querySelectorAll(".button");
+function updateDisplay() {
+    display.textContent = currentInput;
+}
 
-buttons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const buttonText = button.innerText;
-
-    if (buttonText === "AC") {
-      clearAll();
-    } else if (buttonText === "=") {
-      calculate();
-    } else if (buttonText === "±") {
-      toggleSign();
+function appendNumber(number) {
+    if (currentInput === '0') {
+        currentInput = number.toString();
     } else {
-      handleInput(buttonText);
+        currentInput += number.toString();
     }
-  });
-});
+    updateDisplay();
+}
+
+function appendDecimal() {
+    if (!currentInput.includes('.')) {
+        currentInput += '.';
+        updateDisplay();
+    }
+}
+
+function appendOperator(op) {
+    if (currentInput !== '0') {
+        if (operator !== '') {
+            calculate();
+        }
+        previousInput = currentInput;
+        currentInput = '0';
+        operator = op;
+    }
+}
 
 function clearAll() {
-  currentInput = "";
-  operator = "";
-  previousInput = "";
-  display.innerText = "0";
-}
-
-function handleInput(value) {
-  if (["+", "-", "×", "÷", "%", "±", "**"].includes(value)) {
-    if (currentInput === "") return; // Ignore if no input
-    if (previousInput !== "") {
-      calculate();
-    }
-    operator =
-      value === "×" ? "*" : value === "÷" ? "/" : value === "%" ? "%" : value;
-    previousInput = currentInput;
-    currentInput = "";
-  } else {
-    currentInput += value;
-    display.innerText = currentInput;
-  }
-}
-
-function toggleSign() {
-  if (currentInput) {
-    currentInput = (parseFloat(currentInput) * -1).toString();
-    display.innerText = currentInput;
-  }
+    currentInput = '0';
+    operator = '';
+    previousInput = '';
+    updateDisplay();
 }
 
 function calculate() {
-  if (currentInput === "" || previousInput === "") return;
-  let result;
-  const prev = parseFloat(previousInput);
-  const current = parseFloat(currentInput);
+    let result;
+    const prev = parseFloat(previousInput);
+    const current = parseFloat(currentInput);
 
-  switch (operator) {
-    case "+":
-      result = prev + current;
-      break;
-    case "-":
-      result = prev - current;
-      break;
-    case "*":
-      result = prev * current;
-      break;
-    case "/":
-      result = prev / current;
-      break;
-    case "%":
-      result = prev % current;
-      break;
-    case "**":
-      result = Math.pow(prev, current);
-      break;
-    default:
-      return;
-  }
-  currentInput = result.toString();
-  operator = "";
-  previousInput = "";
-  display.innerText = currentInput;
+    switch(operator) {
+        case '+':
+            result = prev + current;
+            break;
+        case '-':
+            result = prev - current;
+            break;
+        case '*':
+            result = prev * current;
+            break;
+        case '/':
+            result = prev / current;
+            break;
+        case '^':
+            result = Math.pow(prev, current);
+            break;
+        case '%':
+            result = prev % current;
+            break;
+        default:
+            return;
+    }
+
+    currentInput = result.toString();
+    operator = '';
+    previousInput = '';
+    updateDisplay();
 }
+
+updateDisplay();
